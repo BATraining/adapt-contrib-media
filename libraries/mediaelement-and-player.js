@@ -3664,11 +3664,9 @@ if (typeof jQuery != 'undefined') {
 						}
 
 						// position floating time box
-						if (!mejs.MediaFeatures.hasTouch) {
-								timefloat.css('left', pos);
-								timefloatcurrent.html( mejs.Utility.secondsToTimeCode(newTime, player.options) );
-								timefloat.show();
-						}
+						timefloat.css('left', pos);
+						timefloatcurrent.html( mejs.Utility.secondsToTimeCode(newTime, player.options) );
+						timefloat.show();
 					}
 				},
 				mouseIsDown = false,
@@ -3768,6 +3766,7 @@ if (typeof jQuery != 'undefined') {
 			//controls.find('.mejs-time-rail').delegate('span', 'click', handleMouseMove);
 			total
 				.bind('mousedown touchstart', function (e) {
+					e.preventDefault();
 					// only handle left clicks or touch
 					if (e.which === 1 || e.which === 0) {
 						mouseIsDown = true;
@@ -3782,21 +3781,17 @@ if (typeof jQuery != 'undefined') {
 						});
 					}
 				})
-				.bind('mouseenter', function(e) {
+				.bind('mousemove', function(e) {
+					e.preventDefault();
 					mouseIsOver = true;
-					t.globalBind('mousemove.dur', function(e) {
-						handleMouseMove(e);
-					});
-					if (!mejs.MediaFeatures.hasTouch) {
-						timefloat.show();
-					}
+					handleMouseMove(e);
+					timefloat.show();
 				})
 				.bind('mouseleave',function(e) {
+					e.preventDefault();
 					mouseIsOver = false;
-					if (!mouseIsDown) {
-						t.globalUnbind('.dur');
-						timefloat.hide();
-					}
+					t.globalUnbind('.dur');
+					timefloat.hide();
 				});
 
 			// loading
