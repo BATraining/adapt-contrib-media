@@ -95,7 +95,9 @@ define([
 			} else {
 				// hover or keyboard focus
 				player.captionsButton.on( 'click', function(e) {
-					$(this).find('.mejs-captions-selector').removeClass('mejs-offscreen').css("visibility", "visible");
+					if (!t.options.allowFullRailMode) {
+						$(this).find('.mejs-captions-selector').removeClass('mejs-offscreen').css("visibility", "visible");
+					}
 					setTimeout(function() {
                     	$($(e.currentTarget).find(".mejs-captions-selector").find("input[type=checkbox]")[0]).focus();
                 	}, 250);
@@ -116,9 +118,9 @@ define([
 					if (e.type==="keyup") {
 	                    $(this).parents(".mejs-captions-button").find("button").focus();
 	                }
-
-	                $(this).parents(".mejs-captions-selector").addClass('mejs-offscreen').css("visibility", "hidden");
-
+					if (!t.options.allowFullRailMode) {
+						$(this).parents(".mejs-captions-selector").addClass('mejs-offscreen').css("visibility", "hidden");
+					}
 				});
 
 			}
@@ -176,14 +178,18 @@ define([
 				function () {
 					// chapters
 					if (player.hasChapters) {
-						player.chapters.removeClass('mejs-offscreen');
+						if (!t.options.allowFullRailMode) {
+							player.chapters.removeClass('mejs-offscreen');
+						}
 						player.chapters.fadeIn(200).height(player.chapters.find('.mejs-chapter').outerHeight());
 					}
 				},
 				function () {
 					if (player.hasChapters && !media.paused) {
 						player.chapters.fadeOut(200, function() {
-							$(this).addClass('mejs-offscreen');
+							if (!t.options.allowFullRailMode) {
+								$(this).addClass('mejs-offscreen');
+							}
 							$(this).css('display','block');
 						});
 					}
@@ -195,7 +201,9 @@ define([
 
 			// check for autoplay
 			if (player.node.getAttribute('autoplay') !== null) {
-				player.chapters.addClass('mejs-offscreen');
+				if (!t.options.allowFullRailMode) {
+					player.chapters.addClass('mejs-offscreen');
+				}
 			}
 		},
 

@@ -2139,6 +2139,11 @@ if (typeof jQuery != 'undefined') {
 		// resize to media dimensions
 		enableAutosize: true,
 
+		// playback rail is full width without buttons aside - Custom Bombardier behavior
+		allowFullRailMode: true,
+		allowOffScreen: false,
+		customVideoSkinName: 'bombardierVideoSkin',
+
 		/*
 		 * Time format to use. Default: 'mm:ss'
 		 * Supported units:
@@ -2544,6 +2549,8 @@ if (typeof jQuery != 'undefined') {
 
 		hideControls: function(doAnimation) {
 			var t = this;
+
+			if (!t.options.allowOffScreen) return;
 
 			doAnimation = typeof doAnimation == 'undefined' || doAnimation;
 
@@ -3054,12 +3061,16 @@ if (typeof jQuery != 'undefined') {
 			if (railWidth === 0 || !railWidth) {
 
 				// find the size of all the other controls besides the rail
-				others.each(function() {
-					var $this = $(this);
-					if ($this.css('position') != 'absolute' && $this.is(':visible')) {
-						usedWidth += $(this).outerWidth(true);
-					}
-				});
+				if (!t.options.allowFullRailMode) {
+					others.each(function () {
+						var $this = $(this);
+						if ($this.css('position') != 'absolute' && $this.is(':visible')) {
+							usedWidth += $(this).outerWidth(true);
+						}
+					});
+				} else {
+					t.container.parents('.media-component').addClass(t.options.customVideoSkinName);
+				}
 
 				// fit the rail into the remaining space
 				railWidth = t.controls.width() - usedWidth - (rail.outerWidth(true) - rail.width());
@@ -4926,20 +4937,21 @@ if (typeof jQuery != 'undefined') {
 				});
 			} else {
 				// hover or keyboard focus
-				player.captionsButton.on( 'mouseenter focusin', function() {
-					$(this).find('.mejs-captions-selector').removeClass('mejs-offscreen');
-				})
+				if (t.options.allowOffScreen) {
+					player.captionsButton.on('mouseenter focusin', function () {
+						$(this).find('.mejs-captions-selector').removeClass('mejs-offscreen');
+					});
 
-				// handle clicks to the language radio buttons
-				.on('click','input[type=radio]',function() {
-					lang = this.value;
-					player.setTrack(lang);
-				});
+					// handle clicks to the language radio buttons
+					player.captionsButton.on('click', 'input[type=radio]', function () {
+							lang = this.value;
+							player.setTrack(lang);
+					});
 
-				player.captionsButton.on( 'mouseleave focusout', function() {
-					$(this).find(".mejs-captions-selector").addClass("mejs-offscreen");
-				});
-
+					player.captionsButton.on('mouseleave focusout', function () {
+						$(this).find(".mejs-captions-selector").addClass("mejs-offscreen");
+					});
+				}
 			}
 
 			if (!player.options.alwaysShowControls) {
