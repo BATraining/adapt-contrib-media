@@ -1,0 +1,108 @@
+@railHeight: 34px;
+.bombardierVideoSkin {
+
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+
+  //&.media-component {
+  .mejs-controls {
+    background: none !important;
+    height: 5px !important;
+
+    .mejs-button.mejs-fullscreen-button {
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
+      width: @railHeight;
+      height: @railHeight;
+
+      &.mejs-unfullscreen {
+        right: 5em;
+        bottom: 5em;
+
+        button {
+          background-position: -60px -29px;
+          background-size: 275px;
+          width: @railHeight;
+          height: @railHeight;
+          padding: 0;
+          margin: 0;
+        }
+      }
+    }
+
+    .mejs-time-rail {
+      .mejs-time-total {
+        height: 5px;
+        margin: 15px 0;
+        background: #2f2f2f;
+      }
+
+      .mejs-time-current {
+        background: linear-gradient(#ff0000, rgba(170, 17, 17, 0.9));
+      }
+      .mejs-time-loaded {
+        background: linear-gradient(#f29c1f, rgba(197, 137, 9, 0.9));
+      }
+
+      span {
+        border-radius: 0;
+        height: @railHeight;
+
+        [class^='mejs-time'] {
+          height: 5px;
+        }
+
+        &.mejs-time-float {
+          height: 15px;
+          top: -25px;
+        }
+
+        &.mejs-time-float-current {
+          width: 100%;
+          margin: 0;
+          line-height: 15px;
+        }
+      }
+    }
+
+    .mejs-button button {
+      background-color: rgba(0, 0, 0, 0.6);
+      height: 20px;
+      width: 20px;
+      margin: 7px;
+      box-sizing: content-box;
+      background-size: 174px;
+      background-position: -39px 0;
+    }
+
+    div {
+      height: auto;
+      &.mejs-time-rail {
+        padding-top: 0;
+        height: @railHeight;
+        position: absolute;
+        bottom: -14px;
+        right: 0;
+        left: 0;
+
+        .mejs-time-total {
+          box-sizing: content-box;
+          margin: 15px 0;
+        }
+      }
+    }
+
+    .mejs-play, .mejs-pause {
+      display: none;
+    }
+    .mejs-time {
+      padding: 0;
+      &[role="timer"] {
+        width: 0;
+        height: 0;
+      }
+    }
+  }
+  // }
+}
