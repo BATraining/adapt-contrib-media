@@ -1,20 +1,31 @@
-@railHeight: 34px;
+@railHeight: 5px;
+@railHeightFocussed: 15px;
+@buttonSize: 34px;
 .bombardierVideoSkin {
 
   -webkit-touch-callout: none !important;
   -webkit-user-select: none !important;
 
-  //&.media-component {
+  .mejs-container-fullscreen {
+    .mejs-controls .mejs-time-rail {
+      bottom: 20px;
+    }
+  }
+
   .mejs-controls {
     background: none !important;
-    height: 5px !important;
+    height: 34px;
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+    left: 0;
 
     .mejs-button.mejs-fullscreen-button {
       position: absolute;
       right: 15px;
       bottom: 15px;
-      width: @railHeight;
-      height: @railHeight;
+      width: @buttonSize;
+      height: @buttonSize;
 
       &.mejs-unfullscreen {
         right: 5em;
@@ -23,8 +34,8 @@
         button {
           background-position: -60px -29px;
           background-size: 275px;
-          width: @railHeight;
-          height: @railHeight;
+          width: @buttonSize;
+          height: @buttonSize;
           padding: 0;
           margin: 0;
         }
@@ -32,14 +43,40 @@
     }
 
     .mejs-time-rail {
+      span {
+        height: @railHeight;
+        transition: height .25s ease-in;
+
+        &.focussed {
+          height: @railHeightFocussed;
+          transition: height .25s ease-out;
+        }
+      }
+
       .mejs-time-total {
-        height: 5px;
-        margin: 15px 0;
-        background: #2f2f2f;
+        height: @railHeight;
+        position: absolute;
+        bottom: -30px;
       }
 
       .mejs-time-current {
         background: linear-gradient(#ff0000, rgba(170, 17, 17, 0.9));
+        span {
+          width: 10px;
+          height: 10px;
+          opacity: 0;
+          transition: opacity .25s ease-in;
+          &.focussed {
+            z-index:999;
+            opacity: 1;
+            transition: opacity .25s ease-out;
+            right: -11px;
+            top: -3px;
+            border: 6px solid #fff;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.5) inset,  2px 2px 5px 0px rgba(0, 0, 0, 0.5);
+          }
+        }
       }
       .mejs-time-loaded {
         background: linear-gradient(#f29c1f, rgba(197, 137, 9, 0.9));
@@ -50,7 +87,7 @@
         height: @railHeight;
 
         [class^='mejs-time'] {
-          height: 5px;
+          height: 100%;
         }
 
         &.mejs-time-float {
@@ -82,7 +119,7 @@
         padding-top: 0;
         height: @railHeight;
         position: absolute;
-        bottom: -14px;
+        bottom: 10px;
         right: 0;
         left: 0;
 
@@ -104,5 +141,4 @@
       }
     }
   }
-  // }
 }

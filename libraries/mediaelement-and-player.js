@@ -3609,7 +3609,7 @@ if (typeof jQuery != 'undefined') {
 				//'<span class="mejs-offscreen">' + this.options.progessHelpText + '</span>' +
 					'<span class="mejs-time-buffering"></span>' +
 					'<span class="mejs-time-loaded"></span>' +
-					'<span class="mejs-time-current"></span>' +
+					'<span class="mejs-time-current"><span></span></span>' +
 					'<span class="mejs-time-handle"></span>' +
 					'<span class="mejs-time-float">' +
 						'<span class="mejs-time-float-current">00:00</span>' +
@@ -3764,10 +3764,26 @@ if (typeof jQuery != 'undefined') {
 
 			// handle clicks
 			//controls.find('.mejs-time-rail').delegate('span', 'click', handleMouseMove);
+			var donut = total.find('.mejs-time-current span');
+			donut.bind('mouseup touchend', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				media.play();
+				media.railPause = false;
+			});
+
 			total
-				.bind('mousedown touchstart', function (e) {
+				.bind('mouseover touchstart', function (e) {
 					// only handle left clicks or touch
 					if (e.which === 1 || e.which === 0) {
+						$(this).addClass('focussed');
+						$(this).find('.mejs-time-current span').addClass('focussed');
+
+						if (!media.paused && media.currentTime !== 0) {
+							media.pause();
+							media.railPause = true;
+						}
+
 						mouseIsDown = true;
 						handleMouseMove(e);
 						t.globalBind('mousemove.dur touchmove.dur', function(e) {
@@ -3775,19 +3791,20 @@ if (typeof jQuery != 'undefined') {
 						});
 						t.globalBind('mouseup.dur touchend.dur', function (e) {
 							mouseIsDown = false;
-							timefloat.hide();
 							t.globalUnbind('.dur');
 						});
 					}
 				})
-				.bind('mousemove', function(e) {
+				.bind('mouseleave touchend',function(e) {
+					$(this).find('.mejs-time-current span').removeClass('focussed');
+					$(this).removeClass('focussed');
 					e.preventDefault();
-					mouseIsOver = true;
-					handleMouseMove(e);
-					timefloat.show();
-				})
-				.bind('mouseleave',function(e) {
-					e.preventDefault();
+
+					if (media.railPause && media.currentTime < media.duration) {
+						media.play();
+						media.railPause = !media.railPause;
+					}
+
 					mouseIsOver = false;
 					t.globalUnbind('.dur');
 					timefloat.hide();
