@@ -3777,11 +3777,33 @@ if (typeof jQuery != 'undefined') {
 			total.parent().bind('mediaDragged', function(e, originalEvent) {
 				e.preventDefault();
 				e.stopPropagation();
+
+				if (window.dragging && !media.paused) {
+					media.draggedPaused = true;
+					media.pause();
+				}
+
 				handleMouseMove(originalEvent);
 			});
 
-			$(window).on('draggedEnd', function() {
+			$(window).on('mediaDraggedEnd', function() {
+				if (media.draggedPaused) {
+						media.draggedPaused = false;
+						media.play();
+				}
 				timefloat.hide();
+			});
+
+			$(window).on('mediaDraggedStart', function() {
+				if (!media.paused) {
+					media.draggedPaused = true;
+					media.pause();
+				} else if (media.draggedPaused){
+					media.play();
+					media.draggedPaused = false;
+				} else {
+					media.draggedPaused = false;
+				}
 			});
 
 			total
