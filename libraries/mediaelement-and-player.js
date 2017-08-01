@@ -3763,52 +3763,74 @@ if (typeof jQuery != 'undefined') {
 
 
 			// handle clicks
-			//controls.find('.mejs-time-rail').delegate('span', 'click', handleMouseMove);
 			var donut = total.find('.mejs-time-current span');
-			donut.bind('mouseup touchend', function (e) {
+			var railTimeout;
+
+			donut.bind('dblclick', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
 				media.play();
-				media.railPause = false;
+			});
+
+			donut.dragMedia({ container: '.mejs-time-rail', draggableEvent: 'mediaDragged'});
+
+			total.parent().bind('mediaDragged', function(e, originalEvent) {
+				e.preventDefault();
+				e.stopPropagation();
+				handleMouseMove(originalEvent);
+			});
+
+			$(window).on('draggedEnd', function() {
+				timefloat.hide();
 			});
 
 			total
-				.bind('mouseover touchstart', function (e) {
-					// only handle left clicks or touch
+				.bind('mouseenter touchstart', function(e) {
+					e.preventDefault();
+					e.stopPropagation();
+					handleFocussedBar(true, $(this));
+					clearTimeout(railTimeout);
+				})
+				.bind('mousedown touchmove', function (e) {
+					if (!media.railFocussed) return;
+
 					if (e.which === 1 || e.which === 0) {
-						$(this).addClass('focussed');
-						$(this).find('.mejs-time-current span').addClass('focussed');
-
-						if (!media.paused && media.currentTime !== 0) {
-							media.pause();
-							media.railPause = true;
-						}
-
 						mouseIsDown = true;
+						mouseIsOver = true;
 						handleMouseMove(e);
-						t.globalBind('mousemove.dur touchmove.dur', function(e) {
-							handleMouseMove(e);
-						});
-						t.globalBind('mouseup.dur touchend.dur', function (e) {
-							mouseIsDown = false;
-							t.globalUnbind('.dur');
-						});
 					}
 				})
-				.bind('mouseleave touchend',function(e) {
-					$(this).find('.mejs-time-current span').removeClass('focussed');
-					$(this).removeClass('focussed');
-					e.preventDefault();
-
-					if (media.railPause && media.currentTime < media.duration) {
-						media.play();
-						media.railPause = !media.railPause;
-					}
-
-					mouseIsOver = false;
-					t.globalUnbind('.dur');
+				.bind('mouseup', function(){
 					timefloat.hide();
+				})
+				.bind('mouseleave touchend',function(e) {
+					e.preventDefault();
+					var self = $(this);
+
+					media.railFocussed = false;
+
+					railTimeout = setTimeout( function() {
+						if (!media.railFocussed) {
+							handleFocussedBar(false, self);
+						}
+					}, t.options.railDownDelay);
 				});
+
+			handleFocussedBar = function(focussed, el) {
+				var selector = 'focussed';
+
+				if (focussed) {
+					el.addClass(selector);
+					donut.addClass(selector);
+				}
+				else {
+					donut.removeClass(selector);
+					el.removeClass(selector);
+					timefloat.hide();
+				}
+
+				media.railFocussed = focussed;
+			};
 
 			// loading
 			media.addEventListener('progress', function (e) {
