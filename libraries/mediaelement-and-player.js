@@ -3609,7 +3609,7 @@ if (typeof jQuery != 'undefined') {
 				//'<span class="mejs-offscreen">' + this.options.progessHelpText + '</span>' +
 					'<span class="mejs-time-buffering"></span>' +
 					'<span class="mejs-time-loaded"></span>' +
-					'<span class="mejs-time-current"></span>' +
+					'<span class="mejs-time-current"><span></span></span>' +
 					'<span class="mejs-time-handle"></span>' +
 					'<span class="mejs-time-float">' +
 						'<span class="mejs-time-float-current">00:00</span>' +
@@ -3763,36 +3763,96 @@ if (typeof jQuery != 'undefined') {
 
 
 			// handle clicks
-			//controls.find('.mejs-time-rail').delegate('span', 'click', handleMouseMove);
+			var donut = total.find('.mejs-time-current span');
+			var railTimeout;
+
+			donut.bind('dblclick', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				media.play();
+			});
+
+			donut.dragMedia({ container: '.mejs-time-rail', draggableEvent: 'mediaDragged'});
+
+			total.parent().bind('mediaDragged', function(e, originalEvent) {
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (window.dragging && !media.paused) {
+					media.draggedPaused = true;
+					media.pause();
+				}
+
+				handleMouseMove(originalEvent);
+			});
+
+			$(window).on('mediaDraggedEnd', function() {
+				if (media.draggedPaused) {
+						media.draggedPaused = false;
+						media.play();
+				}
+				timefloat.hide();
+			});
+
+			$(window).on('mediaDraggedStart', function() {
+				if (!media.paused) {
+					media.draggedPaused = true;
+					media.pause();
+				} else if (media.draggedPaused){
+					media.play();
+					media.draggedPaused = false;
+				} else {
+					media.draggedPaused = false;
+				}
+			});
+
 			total
-				.bind('mousedown touchstart', function (e) {
+				.bind('mouseenter touchstart', function(e) {
 					e.preventDefault();
-					// only handle left clicks or touch
+					e.stopPropagation();
+					handleFocussedBar(true, $(this));
+					clearTimeout(railTimeout);
+				})
+				.bind('mousedown touchmove', function (e) {
+					if (!media.railFocussed) return;
+
 					if (e.which === 1 || e.which === 0) {
 						mouseIsDown = true;
+						mouseIsOver = true;
 						handleMouseMove(e);
-						t.globalBind('mousemove.dur touchmove.dur', function(e) {
-							handleMouseMove(e);
-						});
-						t.globalBind('mouseup.dur touchend.dur', function (e) {
-							mouseIsDown = false;
-							timefloat.hide();
-							t.globalUnbind('.dur');
-						});
 					}
 				})
-				.bind('mousemove', function(e) {
-					e.preventDefault();
-					mouseIsOver = true;
-					handleMouseMove(e);
-					timefloat.show();
-				})
-				.bind('mouseleave',function(e) {
-					e.preventDefault();
-					mouseIsOver = false;
-					t.globalUnbind('.dur');
+				.bind('mouseup', function(){
 					timefloat.hide();
+				})
+				.bind('mouseleave touchend',function(e) {
+					e.preventDefault();
+					var self = $(this);
+
+					media.railFocussed = false;
+
+					railTimeout = setTimeout( function() {
+						if (!media.railFocussed) {
+							handleFocussedBar(false, self);
+						}
+					}, t.options.railDownDelay);
 				});
+
+			handleFocussedBar = function(focussed, el) {
+				var selector = 'focussed';
+
+				if (focussed) {
+					el.addClass(selector);
+					donut.addClass(selector);
+				}
+				else {
+					donut.removeClass(selector);
+					el.removeClass(selector);
+					timefloat.hide();
+				}
+
+				media.railFocussed = focussed;
+			};
 
 			// loading
 			media.addEventListener('progress', function (e) {
