@@ -1,9 +1,9 @@
 define([
-    'core/js/adapt',
-    'core/js/views/componentView',
-    'libraries/mediaelement-and-player',
-    'libraries/mediaelement-and-player-accessible-captions',
-	'libraries/dragMedia'
+    'coreJS/adapt',
+    'coreViews/componentView',
+    '../libraries/mediaelement-and-player',
+    '../libraries/mediaelement-and-player-accessible-captions',
+	'../libraries/dragMedia'
 ], function(Adapt, ComponentView) {
 
     var froogaloopAdded = false;
