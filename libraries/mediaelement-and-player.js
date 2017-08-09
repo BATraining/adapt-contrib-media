@@ -2143,6 +2143,7 @@ if (typeof jQuery != 'undefined') {
 		allowFullRailMode: true,
 		allowOffScreen: false,
 		customVideoSkinName: 'bombardierVideoSkin',
+		railDownDelay: 3000,
 
 		/*
 		 * Time format to use. Default: 'mm:ss'
@@ -3069,7 +3070,7 @@ if (typeof jQuery != 'undefined') {
 						}
 					});
 				} else {
-					t.container.parents('.media-component').addClass(t.options.customVideoSkinName);
+					t.container.parents('.media-component').find('.media-widget').addClass(t.options.customVideoSkinName);
 				}
 
 				// fit the rail into the remaining space
@@ -3763,12 +3764,13 @@ if (typeof jQuery != 'undefined') {
 
 
 			// handle clicks
-			var donut = total.find('.mejs-time-current span');
+			var donut = controls.find('.mejs-time-current span');
 			var railTimeout;
 
 			donut.bind('dblclick', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
+				$(this).removeClass('focussed');
 				media.play();
 			});
 
@@ -3782,7 +3784,8 @@ if (typeof jQuery != 'undefined') {
 					media.draggedPaused = true;
 					media.pause();
 				}
-
+				mouseIsDown = true;
+				mouseIsOver = true;
 				handleMouseMove(originalEvent);
 			});
 
@@ -3814,8 +3817,6 @@ if (typeof jQuery != 'undefined') {
 					clearTimeout(railTimeout);
 				})
 				.bind('mousedown touchmove', function (e) {
-					if (!media.railFocussed) return;
-
 					if (e.which === 1 || e.which === 0) {
 						mouseIsDown = true;
 						mouseIsOver = true;
@@ -3829,17 +3830,14 @@ if (typeof jQuery != 'undefined') {
 					e.preventDefault();
 					var self = $(this);
 
-					media.railFocussed = false;
-
 					railTimeout = setTimeout( function() {
-						if (!media.railFocussed) {
-							handleFocussedBar(false, self);
-						}
+						handleFocussedBar(false, self);
 					}, t.options.railDownDelay);
 				});
 
 			handleFocussedBar = function(focussed, el) {
 				var selector = 'focussed';
+				var donut = el.find('.mejs-time-current span');
 
 				if (focussed) {
 					el.addClass(selector);
@@ -3850,8 +3848,6 @@ if (typeof jQuery != 'undefined') {
 					el.removeClass(selector);
 					timefloat.hide();
 				}
-
-				media.railFocussed = focussed;
 			};
 
 			// loading
@@ -4006,12 +4002,12 @@ if (typeof jQuery != 'undefined') {
 		
 		updateDuration: function() {
 			var t = this;
-			
+
 			var duration = t.media.duration;
 			if (t.options.duration > 0) {
 				duration = t.options.duration;
 			}
-			
+
 			if (isNaN(duration)) {
 				duration = 0;
 			}
