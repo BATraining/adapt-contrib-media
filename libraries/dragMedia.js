@@ -25,7 +25,7 @@
 				} else {
 					var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
 				}
-				
+
 				// drag released outside of btn
 				$(document).on("mouseup", function() {
 					if (window.dragging) {
@@ -39,7 +39,7 @@
 				var drg_w = $drag.outerWidth(),
 					pos_x = $drag.offset().left + drg_w - e.pageX;
 
-				$drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+				$drag.css('z-index', 1000).parents(opt.container).on("mousemove", function(e) {
 					window.dragging = true;
 					var dragEl = $('.draggable');
 					dragEl.parents(opt.container).trigger(opt.draggableEvent, e);
