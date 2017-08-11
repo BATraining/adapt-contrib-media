@@ -2143,7 +2143,7 @@ if (typeof jQuery != 'undefined') {
 		allowFullRailMode: true,
 		allowOffScreen: false,
 		customVideoSkinName: 'bombardierVideoSkin',
-		railDownDelay: 3000,
+		railDownDelay: 1500,
 
 		/*
 		 * Time format to use. Default: 'mm:ss'
