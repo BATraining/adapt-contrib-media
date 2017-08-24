@@ -1,6 +1,6 @@
 /*Accessible closed captions*/
 define([
-    'libraries/mediaelement-and-player'
+    'components/adapt-contrib-media/libraries/mediaelement-and-player'
 ], function() {
 
 	// add extra default options

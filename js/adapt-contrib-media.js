@@ -1,9 +1,10 @@
-define([
-    'core/js/adapt',
-    'core/js/views/componentView',
-    'libraries/mediaelement-and-player',
-    'libraries/mediaelement-and-player-accessible-captions'
-], function(Adapt, ComponentView) {
+define(function(require) {
+
+    var ComponentView = require('coreViews/componentView');
+    var Adapt = require('coreJS/adapt');
+
+    var mediaelementAndPlayer = require('components/adapt-contrib-media/libraries/mediaelement-and-player');
+    var mediaelementAndPlayerAccessibleCaptions = require('components/adapt-contrib-media/libraries/mediaelement-and-player-accessible-captions');
 
     var froogaloopAdded = false;
     
