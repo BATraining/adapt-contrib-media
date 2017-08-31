@@ -168,6 +168,9 @@ define([
 
             if (this.completionEvent === 'inview') {
                 this.$('.component-widget').on('inview', _.bind(this.inview, this));
+            } else {
+                this.onCompletion = _.bind(this.onCompletion, this);        
+                this.mediaElement.addEventListener(this.completionEvent, this.onCompletion);        
             }
 
             // wrapper to check if preventForwardScrubbing is turned on.
@@ -323,6 +326,11 @@ define([
                 }
             }
             if (this.mediaElement && this.mediaElement.player) {
+                
+                if (this.completionEvent !== 'inview') {       
+                    this.mediaElement.removeEventListener(this.completionEvent, this.onCompletion);     
+                }
+
                 var player_id = this.mediaElement.player.id;
 
                 purge(this.$el[0]);
@@ -348,6 +356,12 @@ define([
             }
 
             ComponentView.prototype.remove.call(this);
+        },
+
+        onCompletion: function() {
+            this.setCompletionStatus();
+            // removeEventListener needs to pass in the method to remove the event in firefox and IE10      
+            this.mediaElement.removeEventListener(this.completionEvent, this.onCompletion);     
         },
 
         onDeviceChanged: function() {
