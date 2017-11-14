@@ -7,8 +7,8 @@ define(function(require) {
     var mediaelementAndPlayerAccessibleCaptions = require('components/adapt-contrib-media/libraries/mediaelement-and-player-accessible-captions');
 
     var froogaloopAdded = false;
-    
-    // The following function is used to to prevent a memory leak in Internet Explorer 
+
+    // The following function is used to to prevent a memory leak in Internet Explorer
     // See: http://javascript.crockford.com/memory/leak.html
     function purge(d) {
         var a = d.attributes, i, l, n;
@@ -59,7 +59,7 @@ define(function(require) {
 
                 media.source = media.source.replace(/^https?\:/, "");
 
-                this.model.set('_media', media); 
+                this.model.set('_media', media);
             }
 
             this.checkIfResetOnRevisit();
@@ -169,8 +169,8 @@ define(function(require) {
             if (this.completionEvent === 'inview') {
                 this.$('.component-widget').on('inview', _.bind(this.inview, this));
             } else {
-                this.onCompletion = _.bind(this.onCompletion, this);        
-                this.mediaElement.addEventListener(this.completionEvent, this.onCompletion);        
+                this.onCompletion = _.bind(this.onCompletion, this);
+                this.mediaElement.addEventListener(this.completionEvent, this.onCompletion);
             }
 
             // wrapper to check if preventForwardScrubbing is turned on.
@@ -180,12 +180,12 @@ define(function(require) {
                     'timeupdate': this.onMediaElementTimeUpdate
                 });
             }
-            
-            // handle other completion events in the event Listeners 
+
+            // handle other completion events in the event Listeners
             $(this.mediaElement).on({
-                'play': this.onMediaElementPlay,
-                'pause': this.onMediaElementPause,
-                'ended': this.onMediaElementEnded
+                'play': this.onMediaElementPlay.bind(this),
+                'pause': this.onMediaElementPause.bind(this),
+                'ended': this.onMediaElementEnded.bind(this)
             });
         },
 
@@ -194,7 +194,7 @@ define(function(require) {
                 '_isMediaPlaying': true,
                 '_isMediaEnded': false
             });
-            
+
             if (this.completionEvent === 'play') {
                 this.setCompletionStatus();
             }
@@ -211,7 +211,7 @@ define(function(require) {
                 this.setCompletionStatus();
             }
         },
-        
+
         onMediaElementSeeking: function(event) {
             var maxViewed = this.model.get("_maxViewed");
             if(!maxViewed) {
@@ -254,11 +254,11 @@ define(function(require) {
             // pause on player click
             this.$('.mejs-mediaelement').on("click", this.onMediaElementClick);
         },
-        
+
         onMediaStop: function() {
             var player = this.mediaElement.player;
             if (!player) return;
-            
+
             player.pause();
         },
 
@@ -326,8 +326,8 @@ define(function(require) {
                 }
             }
             if (this.mediaElement && this.mediaElement.player) {
-                if (this.completionEvent !== 'inview') {       
-                    this.mediaElement.removeEventListener(this.completionEvent, this.onCompletion);     
+                if (this.completionEvent !== 'inview') {
+                    this.mediaElement.removeEventListener(this.completionEvent, this.onCompletion);
                 }
 
                 var player_id = this.mediaElement.player.id;
@@ -359,8 +359,8 @@ define(function(require) {
 
         onCompletion: function() {
             this.setCompletionStatus();
-            // removeEventListener needs to pass in the method to remove the event in firefox and IE10      
-            this.mediaElement.removeEventListener(this.completionEvent, this.onCompletion);     
+            // removeEventListener needs to pass in the method to remove the event in firefox and IE10
+            this.mediaElement.removeEventListener(this.completionEvent, this.onCompletion);
         },
 
         onDeviceChanged: function() {
