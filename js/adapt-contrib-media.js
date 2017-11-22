@@ -49,6 +49,7 @@ define(function(require) {
             // set initial player state attributes
             this.model.set({
                 '_isMediaEnded': false,
+                '_isMediaCompleted': false,
                 '_isMediaPlaying': false
             });
 
@@ -206,6 +207,7 @@ define(function(require) {
 
         onMediaElementEnded: function(event) {
             this.model.set('_isMediaEnded', true);
+            this.model.set('_isMediaCompleted', true);
 
             if (this.completionEvent === 'ended') {
                 this.setCompletionStatus();
