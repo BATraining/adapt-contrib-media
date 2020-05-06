@@ -196,9 +196,9 @@ define(function(require) {
                 '_isMediaEnded': false
             });
 
-            if (this.completionEvent === 'play') {
-                this.setCompletionStatus();
-            }
+            // if (this.completionEvent === 'play') {
+            //     this.setCompletionStatus();
+            // }
         },
 
         onMediaElementPause: function(event) {
