@@ -195,6 +195,8 @@ define(function(require) {
                 '_isMediaPlaying': true,
                 '_isMediaEnded': false
             });
+            
+            setTimeout(() => Adapt.trigger(`AccordionWithAudio::itemToggled`), 200);
 
             // if (this.completionEvent === 'play') {
             //     this.setCompletionStatus();
